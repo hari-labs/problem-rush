@@ -1,0 +1,35 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<h2>Create Team</h2>
+
+<form method="POST">
+
+    <div style="margin-bottom: 15px;">
+        <label>Team Code</label><br>
+        <input type="text" name="team_code" required>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>Team Name</label><br>
+        <input type="text" name="team_name" required>
+    </div>
+
+    <button type="submit">Create Team</button>
+
+</form>
+
+{% if generated %}
+    <hr>
+    <h3>Team Created Successfully</h3>
+    <p><strong>Team Code:</strong> {{ team_code }}</p>
+    <p><strong>Password:</strong> {{ raw_password }}</p>
+{% endif %}
+
+<br>
+<a href="/control-room/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+{% endblock %}

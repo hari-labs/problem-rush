@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<h2>Manage Round 2 Attempts</h2>
+
+{% if state.round2_finalized %}
+    <p><strong>Round 2 Finalized.</strong> No further edits allowed.</p>
+{% else %}
+
+<form method="POST">
+
+<table>
+    <tr>
+        <th>Team</th>
+        <th>Question</th>
+        <th>Solved</th>
+        <th>Character Count</th>
+    </tr>
+
+    {% for attempt in attempts %}
+    <tr>
+        <td>{{ attempt.team.team_code }}</td>
+        <td>Q{{ attempt.question.id }}</td>
+        <td>
+            <input type="checkbox"
+                   name="solved_{{ attempt.id }}"
+                   {% if attempt.solved %}checked{% endif %}>
+        </td>
+        <td>
+            <input type="number"
+                   name="char_{{ attempt.id }}"
+                   value="{{ attempt.character_count if attempt.character_count else '' }}">
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<button type="submit">Save All</button>
+
+</form>
+
+{% endif %}
+
+<br>
+<a href="/control-room/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+{% endblock %}

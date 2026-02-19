@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Subround {{ subround_number }}</h3>
+
+{% if already_selected %}
+
+    <p>
+        <a href="{{ selected_question.hackerrank_link }}" target="_blank">
+            <button>Solve This Question</button>
+        </a>
+    </p>
+
+    <p>Decision locked.</p>
+
+{% else %}
+
+    <p>Select one question:</p>
+
+    {% for q in questions %}
+        <div style="margin-bottom: 10px;">
+            <a href="/round1/confirm/{{ q.id }}">
+                <button>
+                    Question {{ q.id }} ({{ q.difficulty }})
+                </button>
+            </a>
+        </div>
+    {% endfor %}
+
+{% endif %}
+
+<br>
+<a href="/round1">
+    <button>Back</button>
+</a>
+
+{% endblock %}

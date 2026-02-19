@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Round 1</h2>
+
+{% for sub in subrounds %}
+    <div style="margin-bottom: 15px;">
+        {% if sub.status == "completed" %}
+            <button disabled>
+                Subround {{ sub.number }} (Completed)
+            </button>
+
+        {% elif sub.status == "active" %}
+            <a href="/round1/subround/{{ sub.number }}">
+                <button>
+                    Subround {{ sub.number }} (Active)
+                </button>
+            </a>
+
+        {% else %}
+            <button disabled>
+                Subround {{ sub.number }} (Locked)
+            </button>
+        {% endif %}
+    </div>
+{% endfor %}
+
+<br>
+<a href="/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+{% endblock %}

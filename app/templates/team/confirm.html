@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Confirm Selection</h3>
+
+<p>
+    You selected:
+    <strong>Question {{ question.id }}</strong>
+    ({{ question.difficulty|upper }})
+</p>
+
+<p>
+    Base Marks: {{ question.base_marks }}
+</p>
+
+<p>
+    This decision cannot be changed.
+</p>
+
+<form method="POST" action="/round1/lock">
+    <input type="hidden" name="question_id" value="{{ question.id }}">
+    <button type="submit">Confirm Selection</button>
+</form>
+
+<br>
+
+<a href="/round1/subround/{{ question.subround_number }}">
+    <button>Go Back</button>
+</a>
+
+{% endblock %}

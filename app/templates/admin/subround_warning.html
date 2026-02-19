@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<h3>Warning</h3>
+
+<p>
+    Subround {{ expected_next }} has not been calculated yet.
+</p>
+
+<p>
+    Are you sure you want to proceed to Subround {{ requested_sub }}?
+</p>
+
+<br>
+
+<a href="/control-room/force-set-subround/{{ requested_sub }}">
+    <button>Proceed Anyway</button>
+</a>
+
+<a href="/control-room/dashboard">
+    <button>Cancel</button>
+</a>
+
+{% endblock %}

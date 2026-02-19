@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<h2>Manage Round 1 Attempts</h2>
+
+<p>
+    <strong>Current Subround:</strong> {{ current_sub }}
+</p>
+
+<form method="POST">
+
+<table>
+    <tr>
+        <th>Team</th>
+        <th>Question</th>
+        <th>Difficulty</th>
+        <th>Solved</th>
+    </tr>
+
+    {% for attempt in attempts %}
+    <tr>
+        <td>{{ attempt.team.team_code }}</td>
+        <td>{{ attempt.question.id }}</td>
+        <td>{{ attempt.question.difficulty }}</td>
+        <td>
+            <input type="checkbox"
+                   name="solved_attempts"
+                   value="{{ attempt.id }}"
+                   {% if attempt.solved %}checked{% endif %}>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+<button type="submit">Save Solved Status</button>
+
+</form>
+
+<br>
+<a href="/control-room/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+{% endblock %}

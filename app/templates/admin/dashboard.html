@@ -1,0 +1,117 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<h2>Admin Control Room</h2>
+
+<!-- Event State -->
+<h3>Event State</h3>
+<p>
+    <strong>Current Round:</strong> {{ state.current_round }} <br>
+    <strong>Current Subround:</strong> {{ state.current_subround }} <br>
+    <strong>Round 1 Active:</strong> {{ state.round1_active }} <br>
+    <strong>Round 2 Active:</strong> {{ state.round2_active }} <br>
+    <strong>Round 2 Attempts:</strong>
+    {{ round2_attempt_count }} / {{ expected_attempts }}
+</p>
+
+
+<!-- Round 1 Controls -->
+<h3>Round 1 Control</h3>
+
+<a href="/control-room/start-round1">
+    <button>Start Round 1</button>
+</a>
+
+<a href="/control-room/end-round1">
+    <button>End Round 1</button>
+</a>
+
+<br><br>
+
+<h4>Activate Subround</h4>
+
+{% for i in range(1,5) %}
+    <a href="/control-room/set-subround/{{ i }}">
+        <button>Subround {{ i }}</button>
+    </a>
+{% endfor %}
+
+<br><br>
+
+<a href="/control-room/manage-attempts">
+    <button>Manage Current Subround Attempts</button>
+</a>
+
+<a href="/control-room/calculate-subround">
+    <button>Close & Calculate Current Subround</button>
+</a>
+
+<hr>
+
+<!-- Round 2 Controls -->
+<h3>Round 2 Control</h3>
+
+<a href="/control-room/start-round2">
+    <button>Start Round 2</button>
+</a>
+
+<a href="/control-room/manage-round2">
+    <button>Manage Round 2 Attempts</button>
+</a>
+
+{% if not state.round2_finalized %}
+    <a href="/control-room/calculate-round2">
+        <button>Calculate Round 2</button>
+    </a>
+{% else %}
+    <p><strong>Round 2 Finalized</strong></p>
+{% endif %}
+
+<hr>
+
+<!-- Leaderboard Control -->
+<h3>Leaderboard Control</h3>
+
+<a href="/control-room/show-leaderboard">
+    <button>Reveal Leaderboard</button>
+</a>
+
+<a href="/control-room/hide-leaderboard">
+    <button>Hide Leaderboard</button>
+</a>
+
+<hr>
+
+<!-- Team Management -->
+<h3>Team Management</h3>
+
+<a href="/control-room/create-team">
+    <button>Create Team</button>
+</a>
+
+<br><br>
+
+<table>
+    <tr>
+        <th>Team Code</th>
+        <th>Team Name</th>
+        <th>Total Score</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for team in teams %}
+    <tr>
+        <td>{{ team.team_code }}</td>
+        <td>{{ team.team_name }}</td>
+        <td>{{ team.total_score }}</td>
+        <td>
+            <a href="/control-room/reset-password/{{ team.id }}">
+                Reset Password
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Round 2</h2>
+
+<p>All questions are available. Solve in any order.</p>
+
+<div style="margin-top: 20px;">
+
+    {% for q in questions %}
+        <div style="margin-bottom: 15px;">
+            <a href="{{ q.hackerrank_link }}" target="_blank">
+                <button>
+                    Question {{ q.id }}
+                </button>
+            </a>
+        </div>
+    {% endfor %}
+
+</div>
+
+<br>
+<a href="/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+{% endblock %}

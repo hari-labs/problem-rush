@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Team Dashboard</h2>
+
+{{ round1_button|safe }}
+<br><br>
+{{ round2_button|safe }}
+
+{% if leaderboard_button %}
+<br><br>
+{{ leaderboard_button|safe }}
+{% endif %}
+
+{% endblock %}

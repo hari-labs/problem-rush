@@ -1,38 +1,109 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h3>Subround {{ subround_number }}</h3>
+<h2 class="text-3xl font-semibold text-amber-400 mb-3">
+Case File {{ subround_number }}
+</h2>
+
+<p class="text-slate-400 mb-10">
+Only one choice. The crowd is watching.
+</p>
+
 
 {% if already_selected %}
 
-    <p>
-        <a href="{{ selected_question.hackerrank_link }}" target="_blank">
-            <button>Solve This Question</button>
-        </a>
+<div class="bg-white/5 backdrop-blur-lg border border-green-400/30 rounded-2xl p-8 shadow-lg">
+
+    <span class="inline-block bg-green-600/30 text-green-400 px-4 py-1 rounded-full mb-4">
+        Decision Locked
+    </span>
+
+    <p class="text-lg mb-3">
+        You selected:
+        <span class="text-amber-400 font-semibold">
+            {{ selected_question.difficulty|capitalize }}
+        </span>
     </p>
 
-    <p>Decision locked.</p>
+    <p class="text-slate-400 text-sm mb-6">
+        Base Marks: {{ selected_question.base_marks }}
+    </p>
+
+    <a href="{{ contest_link }}"
+       target="_blank"
+       class="inline-block bg-amber-400 hover:bg-amber-300 text-black px-6 py-2 rounded-lg font-medium transition">
+        Enter Contest →
+    </a>
+
+</div>
 
 {% else %}
 
-    <p>Select one question:</p>
+<p class="mb-6 text-slate-400">
+Select one question carefully. You cannot change it later.
+</p>
 
-    {% for q in questions %}
-        <div style="margin-bottom: 10px;">
-            <a href="/round1/confirm/{{ q.id }}">
-                <button>
-                    Question {{ q.id }} ({{ q.difficulty }})
-                </button>
-            </a>
-        </div>
-    {% endfor %}
+{% set rotations = ['rotate-1','-rotate-1','rotate-2','-rotate-2','rotate-1','-rotate-1','rotate-2','-rotate-2','rotate-1','-rotate-1'] %}
+
+<div class="grid md:grid-cols-3 gap-8">
+
+{% for q in questions %}
+
+{% if q.difficulty == "easy" %}
+    {% set border_color = "border-green-400/30 hover:border-green-400/60" %}
+    {% set glow = "hover:shadow-green-400/20" %}
+{% elif q.difficulty == "medium" %}
+    {% set border_color = "border-amber-400/30 hover:border-amber-400/60" %}
+    {% set glow = "hover:shadow-amber-400/20" %}
+{% else %}
+    {% set border_color = "border-red-400/30 hover:border-red-400/60" %}
+    {% set glow = "hover:shadow-red-400/20" %}
+{% endif %}
+
+<div class="relative bg-white/5 backdrop-blur-lg border {{ border_color }} rounded-2xl p-8 shadow-lg transition duration-300 transform {{ rotations[loop.index0] }} hover:rotate-0 hover:scale-105 {{ glow }}">
+
+    <!-- Watermark Number -->
+    <div class="absolute inset-0 flex items-center justify-center text-7xl font-bold text-white/5 select-none pointer-events-none">
+        {{ loop.index }}
+    </div>
+
+    <div class="relative z-10">
+
+        <p class="text-sm text-slate-400 mb-2">
+            Difficulty:
+            <span class="font-medium capitalize">
+                {{ q.difficulty }}
+            </span>
+        </p>
+
+        <p class="text-sm text-slate-400 mb-6">
+            Base Marks:
+            <span class="text-amber-400 font-medium">
+                {{ q.base_marks }}
+            </span>
+        </p>
+
+        <a href="/round1/confirm/{{ q.id }}"
+           class="inline-block bg-amber-400 hover:bg-amber-300 text-black px-5 py-2 rounded-lg text-sm font-medium transition">
+            Select
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+</div>
+
 
 {% endif %}
 
-<br>
-<a href="/round1">
-    <button>Back</button>
-</a>
+
+<div class="mt-10">
+    <a href="/round1"
+       class="text-slate-400 hover:text-amber-400 transition text-sm">
+        ← Back to Round 1
+    </a>
+</div>
 
 {% endblock %}

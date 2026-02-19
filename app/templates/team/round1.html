@@ -1,34 +1,81 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h2>Round 1</h2>
+<h2 class="text-3xl font-semibold text-amber-400 mb-3">
+Round 1 — Strategic Selection
+</h2>
+
+<p class="text-slate-400 mb-10">
+Choose wisely. The obvious is crowded.
+</p>
+
+<div class="grid md:grid-cols-2 gap-8">
 
 {% for sub in subrounds %}
-    <div style="margin-bottom: 15px;">
-        {% if sub.status == "completed" %}
-            <button disabled>
-                Subround {{ sub.number }} (Completed)
-            </button>
 
-        {% elif sub.status == "active" %}
-            <a href="/round1/subround/{{ sub.number }}">
-                <button>
-                    Subround {{ sub.number }} (Active)
-                </button>
-            </a>
+<div class="relative bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-8 shadow-lg hover:scale-[1.02] transition duration-300">
 
-        {% else %}
-            <button disabled>
-                Subround {{ sub.number }} (Locked)
-            </button>
-        {% endif %}
+    <!-- Roman numeral background -->
+    <div class="absolute right-6 top-4 text-6xl font-bold text-slate-700/20 select-none">
+        {{ ["I","II","III","IV"][sub.number-1] }}
     </div>
+
+    <h3 class="text-xl font-semibold text-amber-400 mb-3">
+        Case File {{ sub.number }}
+    </h3>
+
+    <p class="text-slate-400 text-sm mb-6">
+        {% if sub.number == 1 %}
+            “Popularity is predictable.”
+        {% elif sub.number == 2 %}
+            “Patterns reveal intentions.”
+        {% elif sub.number == 3 %}
+            “The crowd leaves traces.”
+        {% else %}
+            “Silence hides advantage.”
+        {% endif %}
+    </p>
+
+    {% if sub.status == "active" %}
+
+        <a href="/round1/subround/{{ sub.number }}"
+           class="bg-amber-400 hover:bg-amber-300 text-black px-6 py-2 rounded-lg font-medium transition">
+            Enter Case
+        </a>
+
+    {% elif sub.status == "completed" %}
+
+        <span class="inline-block bg-green-600/30 text-green-400 px-3 py-1 rounded-full mb-3">
+            Completed
+        </span>
+
+        {% if selections.get(sub.number) %}
+            <p class="text-sm text-slate-300">
+                Selected:
+                <span class="text-amber-400 font-medium">
+                    {{ selections[sub.number].difficulty }}
+                </span>
+            </p>
+
+            <a href="{{ selections[sub.number].hackerrank_link }}"
+               target="_blank"
+               class="text-amber-400 hover:underline text-sm">
+                Open Contest →
+            </a>
+        {% endif %}
+
+    {% else %}
+
+        <span class="text-slate-500 text-sm">
+            Locked
+        </span>
+
+    {% endif %}
+
+</div>
+
 {% endfor %}
 
-<br>
-<a href="/dashboard">
-    <button>Back to Dashboard</button>
-</a>
+</div>
 
 {% endblock %}

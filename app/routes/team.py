@@ -6,6 +6,8 @@ from app.models import EventState
 from app.models import Round1Attempt
 from app.models import Round1Question
 from app.models import Round2Question
+from app.models import Round2Attempt
+from app.models import Round1Subround
 
 team_bp = Blueprint('team', __name__)
 
@@ -13,6 +15,13 @@ team_bp = Blueprint('team', __name__)
 @team_bp.route('/')
 def home():
     return "Problem Rush is running!"
+
+@team_bp.app_context_processor
+def inject_team():
+    if session.get("team_id"):
+        team = Team.query.get(session["team_id"])
+        return {"current_team": team}
+    return {}
 
 
 @team_bp.route('/login', methods=['GET', 'POST'])
@@ -37,34 +46,45 @@ def login():
 
 @team_bp.route('/dashboard')
 def dashboard():
-    if 'team_id' not in session:
+    if not session.get('team_id'):
         return redirect(url_for('team.login'))
 
+    team = Team.query.get(session['team_id'])
     state = EventState.query.first()
 
-    round1_button = ""
-    round2_button = ""
-    leaderboard_button = ""
-
-    if state.round1_active:
-        round1_button = '<a href="/round1"><button>Round 1</button></a>'
-    else:
-        round1_button = '<button disabled>Round 1 (Locked)</button>'
-
-    if state.round2_active:
-        round2_button = '<a href="/round2"><button>Round 2</button></a>'
-    else:
-        round2_button = '<button disabled>Round 2 (Locked)</button>'
+    leaderboard = []
 
     if state.leaderboard_visible:
-        leaderboard_button = '<a href="/leaderboard"><button>View Leaderboard</button></a>'
+        teams = Team.query.order_by(Team.total_score.desc()).all()
+
+        for t in teams:
+
+            # Round 1 total
+            r1_total = db.session.query(db.func.sum(Round1Attempt.marks_awarded))\
+                .filter_by(team_id=t.id)\
+                .scalar() or 0
+
+            # Round 2 total
+            r2_total = db.session.query(db.func.sum(Round2Attempt.marks_awarded))\
+                .filter_by(team_id=t.id)\
+                .scalar() or 0
+
+            leaderboard.append({
+                "team_id": t.id,
+                "team_name": t.team_name,
+                "total_score": t.total_score,
+                "round1_score": r1_total,
+                "round2_score": r2_total
+            })
+
 
     return render_template(
         "team/dashboard.html",
-        round1_button=round1_button,
-        round2_button=round2_button,
-        leaderboard_button=leaderboard_button
+        team=team,
+        state=state,
+        leaderboard=leaderboard
     )
+
 
 
 @team_bp.route('/round1')
@@ -73,9 +93,17 @@ def round1():
         return redirect(url_for('team.login'))
 
     state = EventState.query.first()
+    team_id = session['team_id']
     current_sub = state.current_subround
 
     subrounds = []
+    selections = {}
+
+    # Get attempts for this team
+    attempts = Round1Attempt.query.filter_by(team_id=team_id).all()
+
+    for attempt in attempts:
+        selections[attempt.subround_number] = attempt.question
 
     for sub in range(1, 5):
         if sub < current_sub:
@@ -92,7 +120,8 @@ def round1():
 
     return render_template(
         "team/round1.html",
-        subrounds=subrounds
+        subrounds=subrounds,
+        selections=selections
     )
 
 
@@ -114,11 +143,16 @@ def subround_page(sub):
     if existing:
         question = Round1Question.query.get(existing.question_id)
 
+        subround_obj = Round1Subround.query.filter_by(
+            subround_number=sub
+        ).first()
+
         return render_template(
             "team/subround.html",
             subround_number=sub,
             already_selected=True,
-            selected_question=question
+            selected_question=question,
+            contest_link=subround_obj.contest_link
         )
 
     questions = Round1Question.query.filter_by(
@@ -184,23 +218,6 @@ def lock_question():
     return redirect(url_for('team.round1'))
 
 
-@team_bp.route('/leaderboard')
-def leaderboard():
-    if 'team_id' not in session:
-        return redirect(url_for('team.login'))
-
-    state = EventState.query.first()
-
-    if not state.leaderboard_visible:
-        return "Leaderboard is not revealed yet."
-
-    teams = Team.query.order_by(Team.total_score.desc()).all()
-
-    return render_template(
-        "team/leaderboard.html",
-        teams=teams
-    )
-
 @team_bp.route('/round2')
 def round2():
     if 'team_id' not in session:
@@ -218,6 +235,18 @@ def round2():
         questions=questions
     )
 
+
+@team_bp.route('/event-state')
+def event_state():
+    state = EventState.query.first()
+
+    return {
+        "current_round": state.current_round,
+        "current_subround": state.current_subround,
+        "round1_active": state.round1_active,
+        "round2_active": state.round2_active,
+        "leaderboard_visible": state.leaderboard_visible
+    }
 
 
 

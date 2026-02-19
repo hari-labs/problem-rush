@@ -197,6 +197,39 @@ def manage_attempts():
         current_sub=current_sub
     )
 
+@admin_bp.route('/round1-breakdown')
+def round1_breakdown():
+    if not session.get('admin'):
+        return redirect(url_for('admin.login'))
+
+    attempts = Round1Attempt.query.filter_by(solved=True).all()
+
+    breakdown = {}
+
+    for attempt in attempts:
+        sub = attempt.subround_number
+        qid = attempt.question_id
+
+        if sub not in breakdown:
+            breakdown[sub] = {}
+
+        if qid not in breakdown[sub]:
+            breakdown[sub][qid] = {
+                "base_marks": attempt.question.base_marks,
+                "teams": []
+            }
+
+        breakdown[sub][qid]["teams"].append({
+            "team": attempt.team.team_name,
+            "marks": attempt.marks_awarded
+        })
+
+    return render_template(
+        "admin/round1_breakdown.html",
+        breakdown=breakdown
+    )
+
+
 
 @admin_bp.route('/create-team', methods=['GET', 'POST'])
 def create_team():
@@ -279,9 +312,6 @@ def hide_leaderboard():
 def start_round2():
     if not session.get('admin'):
         return redirect(url_for('admin.login'))
-    
-    if not teams or not questions:
-        return "Cannot start Round 2. Teams or Questions missing."
 
     state = EventState.query.first()
 
@@ -295,6 +325,9 @@ def start_round2():
     # Auto-generate Round2Attempt entries
     teams = Team.query.all()
     questions = Round2Question.query.all()
+
+    if not teams or not questions:
+        return "Cannot start Round 2. Teams or Questions missing."
 
     for team in teams:
         for question in questions:
@@ -313,6 +346,7 @@ def start_round2():
     db.session.commit()
 
     return redirect(url_for('admin.dashboard'))
+
 
 @admin_bp.route('/manage-round2', methods=['GET', 'POST'])
 def manage_round2():
@@ -405,6 +439,56 @@ def calculate_round2():
     db.session.commit()
 
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/round2-breakdown')
+def round2_breakdown():
+    if not session.get('admin'):
+        return redirect(url_for('admin.login'))
+
+    questions = Round2Question.query.all()
+
+    breakdown = []
+
+    for question in questions:
+
+        attempts = Round2Attempt.query.filter_by(
+            question_id=question.id,
+            solved=True
+        ).filter(Round2Attempt.character_count != None).all()
+
+        # sort by character count
+        attempts.sort(key=lambda x: x.character_count)
+
+        question_data = []
+        current_rank = 0
+        previous_char = None
+        position = 0
+
+        for attempt in attempts:
+            position += 1
+
+            if attempt.character_count != previous_char:
+                current_rank = position
+
+            previous_char = attempt.character_count
+
+            question_data.append({
+                "rank": current_rank,
+                "team": attempt.team.team_name,
+                "characters": attempt.character_count,
+                "marks": attempt.marks_awarded
+            })
+
+        breakdown.append({
+            "question_id": question.id,
+            "data": question_data
+        })
+
+    return render_template(
+        "admin/round2_breakdown.html",
+        breakdown=breakdown
+    )
+
 
 
 

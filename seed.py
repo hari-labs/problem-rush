@@ -1,43 +1,61 @@
 from app import create_app, db
-from app.models import Round1Question, Round2Question
+from app.models import Round1Question, Round1Subround, Round2Question
 
 
 def seed_round1():
+
+    # --- ROUND 1 CONTEST LINKS ---
+    round1_links = [
+        "https://your-link-sub1.com",
+        "https://your-link-sub2.com",
+        "https://your-link-sub3.com",
+        "https://your-link-sub4.com"
+    ]
+
+    subrounds = []
+
+    for i in range(4):
+        subrounds.append(
+            Round1Subround(
+                subround_number=i + 1,
+                contest_link=round1_links[i]
+            )
+        )
+
+    db.session.add_all(subrounds)
+    db.session.commit()
+
     questions = []
 
-    # 4 subrounds
     for sub in range(1, 5):
 
         # 5 Easy
-        for i in range(1, 6):
+        for _ in range(5):
             questions.append(
                 Round1Question(
                     subround_number=sub,
                     difficulty="easy",
-                    base_marks=50,
-                    hackerrank_link=f"https://dummy-link.com/round1/sub{sub}/easy{i}"
+                    base_marks=50
                 )
             )
 
         # 3 Medium
-        for i in range(1, 4):
+        for _ in range(3):
             questions.append(
                 Round1Question(
                     subround_number=sub,
                     difficulty="medium",
-                    base_marks=75,
-                    hackerrank_link=f"https://dummy-link.com/round1/sub{sub}/medium{i}"
+                    base_marks=75
                 )
             )
 
         # 2 Hard
-        for i in range(1, 3):
+        for _ in range(2):
             questions.append(
                 Round1Question(
                     subround_number=sub,
                     difficulty="hard",
-                    base_marks=100,
-                    hackerrank_link=f"https://dummy-link.com/round1/sub{sub}/hard{i}"
+                    base_marks=100
                 )
             )
 
@@ -46,13 +64,16 @@ def seed_round1():
 
 
 def seed_round2():
+
+    round2_link = "https://www.hackerrank.com/pattern-contest-psgi-2026"
+
     questions = []
 
-    for i in range(1, 6):
+    for _ in range(5):
         questions.append(
             Round2Question(
                 base_marks=100,
-                hackerrank_link=f"https://dummy-link.com/round2/q{i}"
+                hackerrank_link=round2_link
             )
         )
 
@@ -65,8 +86,7 @@ if __name__ == "__main__":
 
     with app.app_context():
 
-        # Only seed if empty
-        if not Round1Question.query.first():
+        if not Round1Subround.query.first():
             seed_round1()
 
         if not Round2Question.query.first():

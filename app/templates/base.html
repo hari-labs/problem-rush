@@ -2,72 +2,105 @@
 <html>
 <head>
     <title>Problem Rush</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+        theme: {
+            extend: {
+            animation: {
+                fadeIn: "fadeIn 0.8s ease-out forwards"
+            },
+            keyframes: {
+                fadeIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" }
+                }
+            }
+            }
         }
+        }
+        </script>
 
-        .container {
-            width: 80%;
-            margin: 40px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 5px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: #2c3e50;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-    </style>
 </head>
-<body>
 
-<div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
 
-        <h3>Problem Rush</h3>
+    <!-- Top Navigation -->
+    {% if session.get('team_id') %}
+    <div class="max-w-6xl mx-auto px-10 py-6 flex justify-between items-center">
 
-        {% if session.get('team_id') %}
-            <a href="/logout">
-                <button style="background-color: #c0392b;">
-                    Logout
-                </button>
+        <div>
+            <h1 class="text-xl font-semibold text-amber-400">
+                PROBLEM RUSH
+            </h1>
+            <p class="text-sm text-slate-400">
+                Operative: {{ current_team.team_name }}
+            </p>
+        </div>
+
+        <div class="space-x-6 text-sm">
+            <a href="{{ url_for('team.dashboard') }}"
+               class="text-slate-400 hover:text-amber-400 transition">
+                Dashboard
             </a>
-        {% endif %}
+
+            <a href="{{ url_for('team.logout') }}"
+               class="text-slate-400 hover:text-red-400 transition">
+                Logout →
+            </a>
+        </div>
 
     </div>
+    {% endif %}
 
-    <hr>
+    <div class="max-w-6xl mx-auto px-10 py-8">
+        {% block content %}{% endblock %}
+    </div>
 
-    {% block content %}
-    {% endblock %}
-</div>
+</body>
+
+
+<script>
+let lastState = null;
+
+async function checkEventState() {
+    try {
+        const response = await fetch("/event-state");
+        const data = await response.json();
+
+        if (lastState && JSON.stringify(lastState) !== JSON.stringify(data)) {
+            // If round changed
+            if (data.current_round === 2 && window.location.pathname.includes("round1")) {
+                window.location.href = "/dashboard";
+                return;
+            }
+
+            if (data.current_round === 1 && window.location.pathname.includes("round2")) {
+                window.location.href = "/dashboard";
+                return;
+            }
+
+            location.reload();
+        }
+
+
+        lastState = data;
+
+    } catch (err) {
+        console.log("Polling error:", err);
+    }
+}
+
+function toggleDetails(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle("hidden");
+}
+
+
+checkEventState();  // run once immediately
+setInterval(checkEventState, 5000);
+</script>
+
 
 </body>
 </html>

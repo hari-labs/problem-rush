@@ -1,28 +1,39 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h2>Round 2</h2>
+<div class="min-h-[70vh] flex items-center justify-center">
 
-<p>All questions are available. Solve in any order.</p>
+    <div class="bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-12 shadow-lg max-w-xl w-full text-center">
 
-<div style="margin-top: 20px;">
+        <h2 class="text-3xl font-bold text-amber-400 mb-2">
+            Round 2
+        </h2>
 
-    {% for q in questions %}
-        <div style="margin-bottom: 15px;">
-            <a href="{{ q.hackerrank_link }}" target="_blank">
-                <button>
-                    Question {{ q.id }}
-                </button>
-            </a>
+        <p class="text-slate-500 mb-8">
+            Code Precision Phase
+        </p>
+
+        <p class="text-slate-400 italic mb-10">
+            "Elegance leaves no trace."
+        </p>
+
+        <div class="text-left text-slate-300 space-y-3 mb-10">
+
+            <p>• Shortest correct code ranks higher.</p>
+            <p>• Incorrect submissions earn zero.</p>
+            <p>• Every character matters.</p>
+            <p>• All 5 problems are inside the contest.</p>
+
         </div>
-    {% endfor %}
+
+        <a href="{{ questions[0].hackerrank_link }}"
+           target="_blank"
+           class="inline-block bg-amber-400 hover:bg-amber-300 text-black px-8 py-3 rounded-lg font-semibold transition">
+            Enter Contest →
+        </a>
+
+    </div>
 
 </div>
-
-<br>
-<a href="/dashboard">
-    <button>Back to Dashboard</button>
-</a>
 
 {% endblock %}

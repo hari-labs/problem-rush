@@ -2,15 +2,157 @@
 
 {% block content %}
 
-<h2>Team Dashboard</h2>
+<div class="min-h-screen max-w-6xl mx-auto px-10 py-10">
 
-{{ round1_button|safe }}
-<br><br>
-{{ round2_button|safe }}
 
-{% if leaderboard_button %}
-<br><br>
-{{ leaderboard_button|safe }}
-{% endif %}
+    <!-- Round Cards -->
+    <div class="grid md:grid-cols-2 gap-8 mb-16">
+
+        <!-- Round 1 Card -->
+        <div class="bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-8 shadow-lg hover:border-amber-400/40 transition">
+
+            <h3 class="text-xl font-semibold mb-2 text-amber-400">
+                Round 1
+            </h3>
+
+            <p class="text-slate-400 text-sm mb-4">
+                Strategic Selection Phase
+            </p>
+
+            {% if state.round1_active %}
+                <span class="text-xs px-3 py-1 bg-green-600/30 text-green-400 rounded-full">
+                    ACTIVE
+                </span>
+
+                <div class="mt-6">
+                    <a href="{{ url_for('team.round1') }}"
+                       class="inline-block bg-amber-400 hover:bg-amber-300 text-black px-6 py-2 rounded-lg font-medium transition">
+                        Enter Round
+                    </a>
+                </div>
+            {% else %}
+                <span class="text-xs px-3 py-1 bg-slate-700 text-slate-400 rounded-full">
+                    Awaiting Activation
+                </span>
+            {% endif %}
+        </div>
+
+
+        <!-- Round 2 Card -->
+        <div class="bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-8 shadow-lg hover:border-amber-400/40 transition">
+
+            <h3 class="text-xl font-semibold mb-2 text-amber-400">
+                Round 2
+            </h3>
+
+            <p class="text-slate-400 text-sm mb-4">
+                Code Precision Phase
+            </p>
+
+            {% if state.round2_active %}
+                <span class="text-xs px-3 py-1 bg-green-600/30 text-green-400 rounded-full">
+                    ACTIVE
+                </span>
+
+                <div class="mt-6">
+                    <a href="{{ url_for('team.round2') }}"
+                       class="inline-block bg-amber-400 hover:bg-amber-300 text-black px-6 py-2 rounded-lg font-medium transition">
+                        Enter Round
+                    </a>
+                </div>
+            {% else %}
+                <span class="text-xs px-3 py-1 bg-slate-700 text-slate-400 rounded-full">
+                    Locked
+                </span>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <!-- Leaderboard Section -->
+    <div class="bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-8 shadow-lg">
+
+        <h3 class="text-xl font-semibold text-amber-400 mb-6">
+            Leaderboard
+        </h3>
+
+        {% if state.leaderboard_visible %}
+
+            <div class="space-y-4 max-h-64 overflow-y-auto">
+
+                {% for entry in leaderboard %}
+                    <div class="bg-slate-800 rounded-lg">
+
+                        <div class="flex justify-between items-center px-4 py-3 rounded-lg cursor-pointer
+                            {% if entry.team_id == team.id %}
+                                bg-amber-400/20 border border-amber-400
+                            {% endif %}
+                        "
+                            onclick="toggleDetails('details-{{ entry.team_id }}')">
+
+                            <div>
+                                <span class="text-slate-400 mr-4">
+                                    #{{ loop.index }}
+                                </span>
+
+                                <span class="font-medium">
+                                    {{ entry.team_name }}
+                                </span>
+                            </div>
+
+                            <span class="text-amber-400 font-semibold">
+                                {{ entry.total_score }} pts
+                            </span>
+                        </div>
+
+                        <div id="details-{{ entry.team_id }}"
+                            class="hidden px-6 pb-4 text-sm text-slate-400">
+
+                            Round 1: {{ entry.round1_score }} pts <br>
+                            Round 2: {{ entry.round2_score }} pts
+
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+
+            </div>
+
+        {% else %}
+
+            <!-- Blurred Placeholder -->
+            <div class="relative">
+
+                <div class="space-y-4 blur-sm opacity-50">
+
+                    {% for i in range(1,4) %}
+                        <div class="flex justify-between items-center px-4 py-3 bg-slate-800 rounded-lg">
+                            <span>#{{ i }} █████████</span>
+                            <span>███ pts</span>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center">
+                        <p class="text-amber-400 font-semibold">
+                            RESULTS CLASSIFIED
+                        </p>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Awaiting clearance.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
 
 {% endblock %}

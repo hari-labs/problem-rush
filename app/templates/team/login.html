@@ -2,28 +2,59 @@
 
 {% block content %}
 
-<h2>Team Login</h2>
+<div class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md px-6">
 
-<form method="POST">
+        <div class="text-center mb-10">
+            
+            <h1 class="text-4xl font-bold tracking-widest text-amber-400">
+                PROBLEM RUSH
+            </h1>
+            <p class="text-slate-400 mt-2">
+                Enter the arena.
+            </p>
+        </div>
 
-    <div style="margin-bottom: 15px;">
-        <label>Team Code</label><br>
-        <input type="text" name="team_code" required>
+        <div class="animate-fadeIn">
+        <div class="relative bg-white/5 backdrop-blur-lg border border-amber-400/20 rounded-2xl p-8 shadow-xl transition duration-300 hover:border-amber-400/40">
+                <span class="absolute top-4 right-4 text-xs text-amber-400 border border-amber-400 px-2 py-1 rounded">
+                CLASSIFIED
+                </span>
+
+                <form method="POST" class="space-y-6">
+
+                    <div>
+                        <label class="text-sm text-slate-400">Team Code</label>
+                        <input type="text" name="team_code"
+                            class="w-full mt-2 p-3 rounded-lg bg-slate-800 border border-slate-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-slate-400">Password</label>
+                        <input type="password" name="password"
+                            class="w-full mt-2 p-3 rounded-lg bg-slate-800 border border-slate-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none transition">
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-amber-400 hover:bg-amber-300 text-black font-semibold py-3 rounded-lg transition duration-300">
+                        Enter Game
+                    </button>
+
+                    <p class="text-xs text-slate-500 text-center mt-4">
+                    Only one team wins. Everyone else learns.
+                    </p>
+
+                </form>
+
+                {% if error %}
+                    <p class="text-red-400 text-sm mt-4 text-center">
+                        {{ error }}
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
     </div>
-
-    <div style="margin-bottom: 15px;">
-        <label>Password</label><br>
-        <input type="password" name="password" required>
-    </div>
-
-    <button type="submit">Login</button>
-
-</form>
-
-{% if error %}
-    <p style="color: red; margin-top: 15px;">
-        {{ error }}
-    </p>
-{% endif %}
+</div>
 
 {% endblock %}

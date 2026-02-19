@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% block content %}
+
+<h2 class="text-2xl font-semibold text-amber-400 mb-6">
+Round 2 Breakdown
+</h2>
+
+{% for q in breakdown %}
+
+<div class="mb-10">
+
+    <h3 class="text-lg font-semibold mb-3">
+        Question {{ q.question_id }}
+    </h3>
+
+    {% if q.data %}
+
+    <table class="w-full border border-slate-700 text-sm">
+        <thead class="bg-slate-800">
+            <tr>
+                <th class="p-2">Rank</th>
+                <th class="p-2">Team</th>
+                <th class="p-2">Characters</th>
+                <th class="p-2">Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in q.data %}
+            <tr class="border-t border-slate-700">
+                <td class="p-2 text-center">{{ row.rank }}</td>
+                <td class="p-2 text-center">{{ row.team }}</td>
+                <td class="p-2 text-center">{{ row.characters }}</td>
+                <td class="p-2 text-center">{{ row.marks }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+        <p class="text-slate-500">No valid submissions.</p>
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+<a href="/control-room/dashboard"
+   class="text-amber-400 hover:underline">
+   ← Back
+</a>
+
+{% endblock %}

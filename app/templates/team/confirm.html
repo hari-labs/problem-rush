@@ -1,32 +1,71 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h3>Confirm Selection</h3>
+<div class="min-h-[60vh] flex items-center justify-center">
 
-<p>
-    You selected:
-    <strong>Question {{ question.id }}</strong>
-    ({{ question.difficulty|upper }})
-</p>
+    <div class="relative bg-white/5 backdrop-blur-lg border border-red-400/20 rounded-2xl p-10 shadow-lg max-w-md w-full">
 
-<p>
-    Base Marks: {{ question.base_marks }}
-</p>
+        <!-- Watermark -->
+        <div class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white/5 select-none pointer-events-none">
+            {{ question.id }}
+        </div>
 
-<p>
-    This decision cannot be changed.
-</p>
+        <div class="relative z-10 text-center">
 
-<form method="POST" action="/round1/lock">
-    <input type="hidden" name="question_id" value="{{ question.id }}">
-    <button type="submit">Confirm Selection</button>
-</form>
+            <!-- Title -->
+            <h2 class="text-3xl font-bold text-amber-400 mb-1">
+                Target {{ question.id }}
+            </h2>
 
-<br>
+            <p class="text-slate-500 text-sm mb-8">
+                Case File {{ question.subround_number }}
+            </p>
 
-<a href="/round1/subround/{{ question.subround_number }}">
-    <button>Go Back</button>
-</a>
+            <!-- Key Details -->
+            <div class="space-y-3 mb-8">
+
+                <p class="text-lg font-medium">
+                    <span class="text-slate-400">Difficulty:</span>
+                    <span class="capitalize text-amber-300">
+                        {{ question.difficulty }}
+                    </span>
+                </p>
+
+                <p class="text-lg font-medium">
+                    <span class="text-slate-400">Base Marks:</span>
+                    <span class="text-amber-400">
+                        {{ question.base_marks }}
+                    </span>
+                </p>
+
+            </div>
+
+            <!-- Warning -->
+            <p class="text-red-400 text-sm mb-8">
+                This cannot be changed.
+            </p>
+
+            <!-- Action -->
+            <form method="POST" action="/round1/lock" class="space-y-4">
+
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+
+                <button type="submit"
+                        class="w-full bg-amber-400 hover:bg-amber-300 text-black py-3 rounded-lg font-semibold transition">
+                    Lock Decision
+                </button>
+
+                <a href="/round1/subround/{{ question.subround_number }}"
+                   class="block text-slate-500 hover:text-amber-400 transition text-sm">
+                    Reconsider
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

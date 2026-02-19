@@ -18,8 +18,14 @@ class Round1Question(db.Model):
     subround_number = db.Column(db.Integer, nullable=False)
     difficulty = db.Column(db.String(20), nullable=False)
     base_marks = db.Column(db.Float, nullable=False)
-    hackerrank_link = db.Column(db.String(300), nullable=False)
     is_active = db.Column(db.Boolean, default=True)
+    
+
+class Round1Subround(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subround_number = db.Column(db.Integer, unique=True, nullable=False)
+    contest_link = db.Column(db.String(300), nullable=False)
+
 
 
 class Round1Attempt(db.Model):

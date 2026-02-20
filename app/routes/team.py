@@ -99,7 +99,6 @@ def round1():
     subrounds = []
     selections = {}
 
-    # Get attempts for this team
     attempts = Round1Attempt.query.filter_by(team_id=team_id).all()
 
     for attempt in attempts:
@@ -118,10 +117,16 @@ def round1():
             "status": status
         })
 
+    subround_links = {}
+    subs = Round1Subround.query.all()
+    for s in subs:
+        subround_links[s.subround_number] = s.contest_link
+
     return render_template(
         "team/round1.html",
         subrounds=subrounds,
-        selections=selections
+        selections=selections,
+        subround_links=subround_links
     )
 
 

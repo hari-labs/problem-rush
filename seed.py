@@ -6,10 +6,10 @@ def seed_round1():
 
     # --- ROUND 1 CONTEST LINKS ---
     round1_links = [
-        "https://your-link-sub1.com",
-        "https://your-link-sub2.com",
-        "https://your-link-sub3.com",
-        "https://your-link-sub4.com"
+        "https://www.hackerrank.com/1-1771517371",
+        "https://www.hackerrank.com/2-1771517413",
+        "https://www.hackerrank.com/3-1771517440",
+        "https://www.hackerrank.com/round-4-1771551891"
     ]
 
     subrounds = []
